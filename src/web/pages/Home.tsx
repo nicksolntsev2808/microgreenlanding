@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, CSSProperties } from "react";
+import Checkout from "../components/Checkout";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 interface Variety { name: string; days: string; benefit: string; }
@@ -73,6 +74,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
   const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -296,6 +298,7 @@ export default function Home() {
                   <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "36px", fontWeight: 600 }}>{price} грн</div>
                 </div>
                 <button style={{ flex: 1, minWidth: "160px", backgroundColor: "#3B5040", color: "#F5F2EB", padding: "16px 24px", fontSize: "13px", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", transition: "background-color 0.3s ease" }}
+                  onClick={() => setCheckoutOpen(true)}
                   onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#2A3B2F"; }}
                   onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#3B5040"; }}>
                   Купити зараз
@@ -469,6 +472,14 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {checkoutOpen && (
+        <Checkout
+          variant={variant}
+          price={price}
+          onClose={() => setCheckoutOpen(false)}
+        />
+      )}
 
       {/* ── FOOTER ── */}
       <footer style={{ backgroundColor: "#0E0E0A", padding: "32px clamp(20px,5vw,48px)" }}>
