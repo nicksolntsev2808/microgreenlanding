@@ -8,6 +8,13 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	</head>
 	<body>
+		<!-- Netlify Forms detection (hidden) -->
+		<form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+			<input type="text" name="name" />
+			<input type="tel" name="phone" />
+			<textarea name="message"></textarea>
+		</form>
+
 		<div id="root"></div>
 		<script type="module" src="/src/web/main.tsx"></script>
 	</body>

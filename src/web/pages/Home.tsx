@@ -71,6 +71,22 @@ export default function Home() {
   const [variant, setVariant] = useState<"simple" | "gift">("simple");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
+  const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormStatus("sending");
+    try {
+      const body = new URLSearchParams({
+        "form-name": "contact",
+        ...formData,
+      });
+      const res = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() });
+      if (res.ok) { setFormStatus("success"); setFormData({ name: "", phone: "", message: "" }); }
+      else { setFormStatus("error"); }
+    } catch { setFormStatus("error"); }
+  };
 
   const featuresRef = useInView();
   const benefitsRef = useInView();
@@ -403,16 +419,51 @@ export default function Home() {
               ))}
             </div>
 
-            <form onSubmit={e => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <form
+              name="contact"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              onSubmit={handleFormSubmit}
+              style={{ display: "flex", flexDirection: "column", gap: "14px" }}
+            >
+              <input type="hidden" name="form-name" value="contact" />
+              <div style={{ display: "none" }}><input name="bot-field" /></div>
               <div style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#8AA68B", marginBottom: "6px" }}>Форма зворотного зв'язку</div>
-              <input type="text" placeholder="Ваше ім'я"    style={s.darkInput} />
-              <input type="tel"  placeholder="Телефон"       style={s.darkInput} />
-              <textarea          placeholder="Ваше повідомлення" rows={4} style={{ ...s.darkInput, resize: "none" }} />
+              <input
+                type="text" name="name" placeholder="Ваше ім'я" required
+                value={formData.name}
+                onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
+                style={s.darkInput}
+              />
+              <input
+                type="tel" name="phone" placeholder="Телефон" required
+                value={formData.phone}
+                onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                style={s.darkInput}
+              />
+              <textarea
+                name="message" placeholder="Ваше повідомлення" rows={4} required
+                value={formData.message}
+                onChange={e => setFormData(p => ({ ...p, message: e.target.value }))}
+                style={{ ...s.darkInput, resize: "none" }}
+              />
+              {formStatus === "success" && (
+                <div style={{ color: "#8AA68B", fontSize: "13px", letterSpacing: "0.05em" }}>
+                  ✓ Дякуємо! Ми зв'яжемося з вами найближчим часом.
+                </div>
+              )}
+              {formStatus === "error" && (
+                <div style={{ color: "#c0392b", fontSize: "13px" }}>
+                  Помилка відправки. Спробуйте ще раз.
+                </div>
+              )}
               <button type="submit"
-                style={{ backgroundColor: "#3B5040", color: "#F5F2EB", padding: "15px 28px", fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", alignSelf: "flex-start", transition: "background-color 0.3s ease" }}
-                onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#8AA68B"; }}
+                disabled={formStatus === "sending"}
+                style={{ backgroundColor: "#3B5040", color: "#F5F2EB", padding: "15px 28px", fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: formStatus === "sending" ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", alignSelf: "flex-start", transition: "background-color 0.3s ease", opacity: formStatus === "sending" ? 0.7 : 1 }}
+                onMouseOver={e => { if (formStatus !== "sending") (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#8AA68B"; }}
                 onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#3B5040"; }}>
-                Надіслати
+                {formStatus === "sending" ? "Відправка..." : "Надіслати"}
               </button>
             </form>
           </div>
