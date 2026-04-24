@@ -75,6 +75,16 @@ export default function Home() {
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
   const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  // Перевірка редиректу після оплати Monobank
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") === "success") {
+      setPaymentSuccess(true);
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -473,6 +483,32 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {paymentSuccess && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(26,26,20,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+          <div style={{ backgroundColor: "#F5F2EB", maxWidth: "480px", width: "100%", padding: "56px 48px", textAlign: "center" }}>
+            <div style={{ width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#E8F0E4", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", fontSize: "28px" }}>✓</div>
+            <p style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#8AA68B", marginBottom: "12px" }}>Замовлення оформлено</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "28px", fontWeight: 400, color: "#1A1A14", marginBottom: "16px", lineHeight: 1.3 }}>
+              Дякуємо за ваше замовлення!
+            </h2>
+            <p style={{ fontSize: "15px", color: "#6B6B5A", lineHeight: 1.7, marginBottom: "12px" }}>
+              Оплату успішно отримано. Ми вже готуємо ваш набір мікрозелені до відправки.
+            </p>
+            <p style={{ fontSize: "14px", color: "#6B6B5A", lineHeight: 1.7, marginBottom: "32px" }}>
+              Очікуйте на дзвінок від нашого менеджера для підтвердження деталей доставки.
+            </p>
+            <div style={{ width: "40px", height: "2px", backgroundColor: "#8AA68B", margin: "0 auto 32px" }} />
+            <button
+              onClick={() => setPaymentSuccess(false)}
+              style={{ backgroundColor: "#3B5040", color: "#F5F2EB", padding: "15px 40px", fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", transition: "background-color 0.3s" }}
+              onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#2A3B2F"; }}
+              onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#3B5040"; }}>
+              Повернутись на сайт
+            </button>
+          </div>
+        </div>
+      )}
 
       {checkoutOpen && (
         <Checkout

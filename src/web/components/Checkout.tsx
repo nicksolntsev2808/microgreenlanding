@@ -179,9 +179,13 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
           }),
         });
         const data = await res.json();
+        console.log("Monobank response:", JSON.stringify(data));
         if (data.pageUrl) window.location.href = data.pageUrl;
-        else setError("Не вдалося створити платіж. Спробуйте ще раз.");
-      } catch { setError("Помилка підключення до платіжної системи."); }
+        else setError(`Помилка: ${data.errText || data.error || JSON.stringify(data)}`);
+      } catch (err) { 
+        console.error("Fetch error:", err);
+        setError(`Помилка з'єднання: ${err}`); 
+      }
       finally { setLoading(false); }
     }
   };
