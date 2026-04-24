@@ -188,6 +188,10 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
   };
 
   // ── Стилі ──
+  const lbl: React.CSSProperties = {
+    display: "block", fontSize: "11px", letterSpacing: "0.1em",
+    textTransform: "uppercase", color: "#6B6B5A", marginBottom: "6px", fontFamily: "'Jost', sans-serif",
+  };
   const inp: React.CSSProperties = {
     width: "100%", padding: "12px 14px", fontSize: "14px",
     border: "1px solid #C8C4BB", backgroundColor: "#FAFAF7",
@@ -247,10 +251,22 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
           <div style={{ marginBottom: "24px" }}>
             <div style={{ fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8AA68B", marginBottom: "12px" }}>Контактні дані</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              <input style={inp} type="text" placeholder="Ім'я" value={firstName} onChange={e => setFirstName(e.target.value)} required />
-              <input style={inp} type="text" placeholder="Прізвище" value={lastName} onChange={e => setLastName(e.target.value)} required />
-              <input style={inp} type="text" placeholder="По батькові" value={middleName} onChange={e => setMiddleName(e.target.value)} />
-              <input style={inp} type="tel" placeholder="Телефон (+38...)" value={phone} onChange={e => setPhone(e.target.value)} required />
+              <div>
+                <label style={lbl}>Ім'я *</label>
+                <input style={inp} type="text" placeholder="Введіть ім'я" value={firstName} onChange={e => setFirstName(e.target.value)} required />
+              </div>
+              <div>
+                <label style={lbl}>Прізвище *</label>
+                <input style={inp} type="text" placeholder="Введіть прізвище" value={lastName} onChange={e => setLastName(e.target.value)} required />
+              </div>
+              <div>
+                <label style={lbl}>По батькові</label>
+                <input style={inp} type="text" placeholder="Введіть по батькові" value={middleName} onChange={e => setMiddleName(e.target.value)} />
+              </div>
+              <div>
+                <label style={lbl}>Телефон *</label>
+                <input style={inp} type="tel" placeholder="+38 (0__) ___-__-__" value={phone} onChange={e => setPhone(e.target.value)} required />
+              </div>
             </div>
           </div>
 
@@ -277,8 +293,9 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {/* Місто */}
                 <div ref={cityRef} style={{ position: "relative" }}>
+                  <label style={lbl}>Місто *</label>
                   <input
-                    style={inp} type="text" placeholder="Введіть місто..."
+                    style={inp} type="text" placeholder="Почніть вводити назву міста..."
                     value={cityQuery}
                     onChange={e => { setCityQuery(e.target.value); setSelectedCity(null); setSelectedWarehouse(null); }}
                     onFocus={() => { if (cities.length > 0) setShowCities(true); }}
@@ -302,10 +319,11 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
                 {/* Відділення */}
                 {selectedCity && (
                   <div ref={warehouseRef} style={{ position: "relative" }}>
+                    <label style={lbl}>Відділення або поштомат *</label>
                     <input
                       style={{ ...inp, backgroundColor: warehouseLoading ? "#f0f0ed" : "#FAFAF7" }}
                       type="text"
-                      placeholder={warehouseLoading ? "Завантаження відділень..." : "Пошук відділення або поштомату..."}
+                      placeholder={warehouseLoading ? "Завантаження відділень..." : "Введіть номер або адресу відділення..."}
                       value={warehouseQuery}
                       onChange={e => { setWarehouseQuery(e.target.value); setSelectedWarehouse(null); setShowWarehouses(true); }}
                       onFocus={() => setShowWarehouses(true)}
@@ -335,8 +353,14 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
             {/* Укрпошта — прості поля */}
             {carrier === "ukrposhta" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <input style={inp} type="text" placeholder="Місто" value={upCity} onChange={e => setUpCity(e.target.value)} required />
-                <input style={inp} type="text" placeholder="Поштовий індекс або відділення" value={upBranch} onChange={e => setUpBranch(e.target.value)} required />
+                <div>
+                  <label style={lbl}>Місто *</label>
+                  <input style={inp} type="text" placeholder="Введіть місто" value={upCity} onChange={e => setUpCity(e.target.value)} required />
+                </div>
+                <div>
+                  <label style={lbl}>Поштовий індекс або відділення *</label>
+                  <input style={inp} type="text" placeholder="Напр. 65000 або відділення №5" value={upBranch} onChange={e => setUpBranch(e.target.value)} required />
+                </div>
               </div>
             )}
           </div>
