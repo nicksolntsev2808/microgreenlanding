@@ -20,7 +20,9 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
   const [step, setStep] = useState<Step>("form");
   const [carrier, setCarrier] = useState<Carrier>("nova_poshta");
   const [payment, setPayment] = useState<Payment>("card");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [phone, setPhone] = useState("");
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -104,7 +106,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
         apiKey: NP_API_KEY,
         modelName: "AddressGeneral",
         calledMethod: "getWarehouses",
-        methodProperties: { CityRef: selectedCity.Ref, Limit: 100 },
+        methodProperties: { CityRef: selectedCity.Ref, Limit: 500 },
       }),
     })
       .then(r => r.json())
@@ -128,7 +130,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
   };
 
   const isFormValid = () => {
-    if (!name.trim() || !phone.trim()) return false;
+    if (!firstName.trim() || !lastName.trim() || !phone.trim()) return false;
     if (carrier === "nova_poshta") return !!(selectedCity && selectedWarehouse);
     return !!(upCity.trim() && upBranch.trim());
   };
@@ -143,7 +145,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
       try {
         const body = new URLSearchParams({
           "form-name": "checkout",
-          name, phone,
+          name: `${lastName} ${firstName} ${middleName}`.trim(), phone,
           carrier: carrierLabel,
           address: getDeliveryAddress(),
           variant: variantLabel,
@@ -170,11 +172,11 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
             ccy: 980,
             merchantPaymInfo: {
               reference: `order-${Date.now()}`,
-              destination: `Набір TIGER (${variantLabel})`,
-              basketOrder: [{ name: `Набір TIGER — ${variantLabel}`, qty: 1, sum: price * 100, unit: "шт." }],
+              destination: `Набір мікрозелені 10 врожаїв (${variantLabel})`,
+              basketOrder: [{ name: `Набір мікрозелені 10 врожаїв — ${variantLabel}`, qty: 1, sum: price * 100, unit: "шт." }],
             },
             redirectUrl: `${window.location.origin}/?payment=success`,
-            comment: `${name}, ${phone}, ${carrierLabel}: ${getDeliveryAddress()}. ${comment}`.trim(),
+            comment: `${lastName} ${firstName} ${middleName}, ${phone}, ${carrierLabel}: ${getDeliveryAddress()}. ${comment}`.trim(),
           }),
         });
         const data = await res.json();
@@ -236,7 +238,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
           <div style={{ backgroundColor: "#EDE9DF", padding: "16px", marginBottom: "28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <div style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#6B6B5A", marginBottom: "4px" }}>Ваше замовлення</div>
-              <div style={{ fontSize: "15px", color: "#1A1A14" }}>Набір TIGER — {variantLabel}</div>
+              <div style={{ fontSize: "15px", color: "#1A1A14" }}>Набір мікрозелені 10 врожаїв — {variantLabel}</div>
             </div>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", color: "#3B5040", fontWeight: 600 }}>{price} грн</div>
           </div>
@@ -245,7 +247,9 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
           <div style={{ marginBottom: "24px" }}>
             <div style={{ fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8AA68B", marginBottom: "12px" }}>Контактні дані</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              <input style={inp} type="text" placeholder="Ім'я та прізвище" value={name} onChange={e => setName(e.target.value)} required />
+              <input style={inp} type="text" placeholder="Ім'я" value={firstName} onChange={e => setFirstName(e.target.value)} required />
+              <input style={inp} type="text" placeholder="Прізвище" value={lastName} onChange={e => setLastName(e.target.value)} required />
+              <input style={inp} type="text" placeholder="По батькові" value={middleName} onChange={e => setMiddleName(e.target.value)} />
               <input style={inp} type="tel" placeholder="Телефон (+38...)" value={phone} onChange={e => setPhone(e.target.value)} required />
             </div>
           </div>

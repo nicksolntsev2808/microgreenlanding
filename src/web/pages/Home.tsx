@@ -110,6 +110,7 @@ export default function Home() {
   }, [menuOpen]);
 
   const price = variant === "gift" ? 780 : 680;
+  const variantSectionRef = useRef<HTMLDivElement>(null);
 
   return (
     <div style={{ fontFamily: "'Jost', sans-serif", backgroundColor: "#F5F2EB", color: "#1A1A14", minHeight: "100vh" }}>
@@ -169,7 +170,7 @@ export default function Home() {
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
           <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", alignItems: "center" }}>
             <div>
-              <p style={{ ...s.label, opacity: 0, animation: "fadeInUp 0.8s ease 0.1s forwards" }}>Мікрозелень / Tiger</p>
+              <p style={{ ...s.label, opacity: 0, animation: "fadeInUp 0.8s ease 0.1s forwards" }}>Мікрозелень / Набір мікрозелені 10 врожаїв</p>
               <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(40px,6vw,78px)", fontWeight: 400, lineHeight: 1.05, marginBottom: "28px", opacity: 0, animation: "fadeInUp 0.8s ease 0.2s forwards" }}>
                 вирости своє<br /><em style={{ fontStyle: "italic", color: "#3B5040" }}>зелене</em> диво
               </h1>
@@ -177,7 +178,7 @@ export default function Home() {
                 Набір для вирощування мікрозелені з 10 видів насіння. Свіжа зелень прямо з підвіконня вже за 7–14 днів.
               </p>
               <div style={{ opacity: 0, animation: "fadeInUp 0.8s ease 0.5s forwards" }}>
-                <a href="#product" style={s.cta}>Замовити — {price} грн</a>
+                <a href="#variant-select" style={s.cta} onClick={e => { e.preventDefault(); variantSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); }}>Замовити — {price} грн</a>
               </div>
             </div>
             <div style={{ position: "relative", opacity: 0, animation: "fadeIn 1s ease 0.3s forwards" }}>
@@ -245,7 +246,7 @@ export default function Home() {
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
           <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "72px", alignItems: "start" }}>
             <div style={{ opacity: productRef.inView ? 1 : 0, transform: productRef.inView ? "translateX(0)" : "translateX(-40px)", transition: "all 0.8s ease" }}>
-              <img src="/hero-product.png" alt="Набір TIGER"
+              <img src="/hero-product.png" alt="Набір мікрозелені 10 врожаїв"
                 style={{ width: "100%", height: "clamp(240px,34vw,420px)", objectFit: "cover", marginBottom: "14px" }} />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
                 <img src="/microgreens-close.png" alt="Мікрозелень"
@@ -256,7 +257,7 @@ export default function Home() {
             </div>
 
             <div style={{ opacity: productRef.inView ? 1 : 0, transform: productRef.inView ? "translateX(0)" : "translateX(40px)", transition: "all 0.8s ease 0.2s" }}>
-              <p style={s.label}>Набір Tiger</p>
+              <p style={s.label}>Набір мікрозелені 10 врожаїв</p>
               <h2 style={s.sectionTitle}>Усе для вашого<br />першого врожаю</h2>
               <p style={{ fontSize: "15px", color: "#4A4A3A", lineHeight: 1.7, marginBottom: "32px" }}>
                 Набір містить все необхідне: льняний килимок, лоток, насіння 10 видів по 10г та інструкцію.
@@ -275,7 +276,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: "28px" }}>
+              <div id="variant-select" ref={variantSectionRef} style={{ marginBottom: "28px" }}>
                 <div style={{ fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "12px", color: "#6B6B5A" }}>Фасування насіння</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                   {([
@@ -298,7 +299,7 @@ export default function Home() {
                   <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "36px", fontWeight: 600 }}>{price} грн</div>
                 </div>
                 <button style={{ flex: 1, minWidth: "160px", backgroundColor: "#3B5040", color: "#F5F2EB", padding: "16px 24px", fontSize: "13px", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", transition: "background-color 0.3s ease" }}
-                  onClick={() => setCheckoutOpen(true)}
+                  onClick={() => { variantSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => setCheckoutOpen(true), 600); }}
                   onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#2A3B2F"; }}
                   onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#3B5040"; }}>
                   Купити зараз
