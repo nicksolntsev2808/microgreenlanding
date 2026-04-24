@@ -11,7 +11,6 @@ type Payment = "card" | "cod";
 type Step = "form" | "success";
 
 const NP_API_KEY = "9f1e4307f82a41e8988d5baf2a1218a7";
-const MONOBANK_TOKEN = import.meta.env.VITE_MONOBANK_TOKEN;
 
 interface NpCity { Ref: string; Description: string; }
 interface NpWarehouse { Ref: string; Description: string; }
@@ -164,9 +163,9 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
       finally { setLoading(false); }
     } else {
       try {
-        const res = await fetch("https://api.monobank.ua/api/merchant/invoice/create", {
+        const res = await fetch("/api/create-invoice", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "X-Token": MONOBANK_TOKEN },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             amount: price * 100,
             ccy: 980,
