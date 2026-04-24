@@ -11,7 +11,7 @@ type Payment = "card" | "cod";
 type Step = "form" | "success";
 
 const NP_API_KEY = "9f1e4307f82a41e8988d5baf2a1218a7";
-const MONOBANK_TOKEN = "YOUR_MONOBANK_TOKEN"; // ← замінити після реєстрації
+const MONOBANK_TOKEN = import.meta.env.VITE_MONOBANK_TOKEN;
 
 interface NpCity { Ref: string; Description: string; }
 interface NpWarehouse { Ref: string; Description: string; }
