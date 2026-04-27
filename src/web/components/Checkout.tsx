@@ -144,7 +144,11 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
 
     if (payment === "cod") {
       try {
-        const body = new URLSearchParams({
+        const orderRef = `cod-${Date.now()}`;
+        const fullComment = `${lastName} ${firstName} ${middleName}, ${phone}, ${email}, ${carrierLabel}: ${getDeliveryAddress()}. ${comment}`.trim();
+
+        // Netlify Forms
+        const formBody = new URLSearchParams({
           "form-name": "checkout",
           name: `${lastName} ${firstName} ${middleName}`.trim(), phone, email,
           carrier: carrierLabel,
@@ -157,10 +161,22 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
         const res = await fetch("/", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: body.toString(),
+          body: formBody.toString(),
         });
-        if (res.ok) setStep("success");
-        else setError("Помилка відправки. Спробуйте ще раз.");
+
+        // Telegram уведомление
+        await fetch("/api/notify-cod", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderRef, amount: price, comment: fullComment }),
+        });
+
+        if (res.ok) {
+          setInvoiceId(orderRef);
+          setStep("success");
+        } else {
+          setError("Помилка відправки. Спробуйте ще раз.");
+        }
       } catch { setError("Помилка відправки. Спробуйте ще раз."); }
       finally { setLoading(false); }
     } else {
@@ -223,6 +239,12 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
         <div style={{ backgroundColor: "#F5F2EB", maxWidth: "420px", width: "100%", padding: "48px 40px", textAlign: "center" }}>
           <div style={{ fontSize: "40px", marginBottom: "16px" }}>✓</div>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "24px", fontWeight: 400, marginBottom: "12px", color: "#1A1A14" }}>Замовлення прийнято!</h2>
+          {invoiceId && (
+            <div style={{ backgroundColor: "#E8F0E4", padding: "12px 20px", marginBottom: "16px", display: "inline-block" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8AA68B", marginBottom: "4px" }}>Номер вашого замовлення</div>
+              <div style={{ fontSize: "15px", fontFamily: "'Jost', monospace", color: "#1A1A14", letterSpacing: "0.05em" }}>{invoiceId}</div>
+            </div>
+          )}
           <p style={{ fontSize: "14px", color: "#6B6B5A", lineHeight: 1.6, marginBottom: "28px" }}>
             Ми зв'яжемося з вами найближчим часом для підтвердження замовлення.
           </p>
