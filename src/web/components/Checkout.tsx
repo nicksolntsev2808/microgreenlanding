@@ -27,6 +27,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [invoiceId, setInvoiceId] = useState("");
 
   // Нова пошта — пошук міста
   const [cityQuery, setCityQuery] = useState("");
@@ -181,7 +182,10 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
         });
         const data = await res.json();
         console.log("Monobank response:", JSON.stringify(data));
-        if (data.pageUrl) window.location.href = data.pageUrl;
+        if (data.pageUrl) {
+          if (data.invoiceId) sessionStorage.setItem('invoiceId', data.invoiceId);
+          window.location.href = data.pageUrl;
+        }
         else setError(`Помилка: ${data.errText || data.error || JSON.stringify(data)}`);
       } catch (err) { 
         console.error("Fetch error:", err);

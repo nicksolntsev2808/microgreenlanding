@@ -76,6 +76,7 @@ export default function Home() {
   const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [invoiceId, setInvoiceId] = useState("");
 
   // Перевірка редиректу після оплати Monobank
   useEffect(() => {
@@ -495,6 +496,12 @@ export default function Home() {
             <p style={{ fontSize: "15px", color: "#6B6B5A", lineHeight: 1.7, marginBottom: "12px" }}>
               Оплату успішно отримано. Ми вже готуємо ваш набір мікрозелені до відправки.
             </p>
+            {invoiceId && (
+              <div style={{ backgroundColor: "#E8F0E4", padding: "12px 20px", marginBottom: "16px", display: "inline-block" }}>
+                <div style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8AA68B", marginBottom: "4px" }}>Номер вашого замовлення</div>
+                <div style={{ fontSize: "16px", fontFamily: "'Jost', monospace", color: "#1A1A14", letterSpacing: "0.05em" }}>{invoiceId}</div>
+              </div>
+            )}
             <p style={{ fontSize: "14px", color: "#6B6B5A", lineHeight: 1.7, marginBottom: "32px" }}>
               Очікуйте на дзвінок від нашого менеджера для підтвердження деталей доставки.
             </p>

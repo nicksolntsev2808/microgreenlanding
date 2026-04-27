@@ -1,3 +1,7 @@
+// Зберігаємо дані замовлень в пам'яті (живе поки функція активна)
+// Для продакшену краще використовувати БД, але для малих обсягів підходить
+const orderStore = globalThis.orderStore || (globalThis.orderStore = new Map());
+
 export default async (req, context) => {
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
@@ -16,8 +20,8 @@ export default async (req, context) => {
 
   try {
     const body = await req.json();
+    const reference = body.merchantPaymInfo?.reference || `order-${Date.now()}`;
 
-    // Додаємо webhook URL для отримання статусу оплати
     const invoiceBody = {
       ...body,
       webHookUrl: `${new URL(req.url).origin}/api/monobank-webhook`,
@@ -34,25 +38,34 @@ export default async (req, context) => {
 
     const data = await response.json();
 
-    // Одразу повідомляємо в Telegram що замовлення створено (ще не оплачено)
-    if (data.invoiceId && TELEGRAM_TOKEN && CHAT_ID) {
-      const comment = body.comment || "—";
-      const amount = (body.amount / 100).toFixed(0);
-      const message = `🛒 *Нове замовлення створено*\n\n` +
-        `🆔 Invoice: \`${data.invoiceId}\`\n` +
-        `💰 Сума: *${amount} грн*\n` +
-        `📝 ${comment}\n` +
-        `⏳ Очікує оплати...`;
-
-      await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: message,
-          parse_mode: "Markdown",
-        }),
+    if (data.invoiceId) {
+      // Зберігаємо дані замовлення по invoiceId
+      orderStore.set(data.invoiceId, {
+        comment: body.comment || "—",
+        amount: body.amount,
+        reference,
       });
+
+      // Повідомлення в Telegram — замовлення створено
+      if (TELEGRAM_TOKEN && CHAT_ID) {
+        const amount = (body.amount / 100).toFixed(0);
+        const comment = body.comment || "—";
+        const message = `🛒 *Нове замовлення створено*\n\n` +
+          `🆔 Invoice: \`${data.invoiceId}\`\n` +
+          `💰 Сума: *${amount} грн*\n` +
+          `📝 ${comment}\n` +
+          `⏳ Очікує оплати...`;
+
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: "Markdown",
+          }),
+        });
+      }
     }
 
     return new Response(JSON.stringify(data), {

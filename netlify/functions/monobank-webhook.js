@@ -1,12 +1,17 @@
+const orderStore = globalThis.orderStore || (globalThis.orderStore = new Map());
+
 export default async (req, context) => {
+  if (req.method === "GET") {
+    return new Response("OK", { status: 200 });
+  }
+
   if (req.method !== "POST") {
     return new Response("OK", { status: 200 });
   }
 
   try {
     const data = await req.json();
-    
-    // Monobank шлє статус invoiceCreated, processing, success, failure, reversed
+
     if (data.status !== "success") {
       return new Response("OK", { status: 200 });
     }
@@ -15,13 +20,16 @@ export default async (req, context) => {
     const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
     const amount = (data.amount / 100).toFixed(0);
-    const ref = data.reference || "—";
-    const comment = data.comment || "—";
+    const invoiceId = data.invoiceId || "—";
+
+    // Витягуємо збережені дані замовлення
+    const orderData = orderStore.get(invoiceId);
+    const comment = orderData?.comment || data.comment || "—";
 
     const message = `✅ *Нове замовлення оплачено!*\n\n` +
-      `🆔 Номер: \`${ref}\`\n` +
+      `🆔 Invoice: \`${invoiceId}\`\n` +
       `💰 Сума: *${amount} грн*\n` +
-      `📝 Деталі: ${comment}\n` +
+      `📋 Деталі замовлення:\n${comment}\n` +
       `🕐 Час: ${new Date().toLocaleString("uk-UA", { timeZone: "Europe/Kiev" })}`;
 
     await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
@@ -33,6 +41,9 @@ export default async (req, context) => {
         parse_mode: "Markdown",
       }),
     });
+
+    // Видаляємо з пам'яті після успішної оплати
+    orderStore.delete(invoiceId);
 
     return new Response("OK", { status: 200 });
   } catch (err) {
