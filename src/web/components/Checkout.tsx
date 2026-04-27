@@ -23,6 +23,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
   const [lastName, setLastName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -129,7 +130,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
   };
 
   const isFormValid = () => {
-    if (!firstName.trim() || !lastName.trim() || !phone.trim()) return false;
+    if (!firstName.trim() || !lastName.trim() || !phone.trim() || !email.trim()) return false;
     if (carrier === "nova_poshta") return !!(selectedCity && selectedWarehouse);
     return !!(upCity.trim() && upBranch.trim());
   };
@@ -144,7 +145,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
       try {
         const body = new URLSearchParams({
           "form-name": "checkout",
-          name: `${lastName} ${firstName} ${middleName}`.trim(), phone,
+          name: `${lastName} ${firstName} ${middleName}`.trim(), phone, email,
           carrier: carrierLabel,
           address: getDeliveryAddress(),
           variant: variantLabel,
@@ -175,7 +176,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
               basketOrder: [{ name: `Набір мікрозелені 10 врожаїв — ${variantLabel}`, qty: 1, sum: price * 100, unit: "шт." }],
             },
             redirectUrl: `${window.location.origin}/?payment=success`,
-            comment: `${lastName} ${firstName} ${middleName}, ${phone}, ${carrierLabel}: ${getDeliveryAddress()}. ${comment}`.trim(),
+            comment: `${lastName} ${firstName} ${middleName}, ${phone}, ${email}, ${carrierLabel}: ${getDeliveryAddress()}. ${comment}`.trim(),
           }),
         });
         const data = await res.json();
@@ -269,6 +270,10 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
               <div>
                 <label style={lbl}>Телефон *</label>
                 <input style={inp} type="tel" placeholder="+38 (0__) ___-__-__" value={phone} onChange={e => setPhone(e.target.value)} required />
+              </div>
+              <div>
+                <label style={lbl}>Email *</label>
+                <input style={inp} type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
             </div>
           </div>
