@@ -31,7 +31,7 @@ const varieties: Variety[] = [
   { name: "Люцерна",   days: "7–10 днів",  benefit: "Підтримує імунну систему, покращує травлення" },
   { name: "Редис",     days: "5–7 днів",   benefit: "Нормалізує обмін речовин" },
   { name: "Соняшник",  days: "7–10 днів",  benefit: "Корисні жири і білок" },
-  { name: "Мізуна",    days: "7–14 днів",  benefit: "Зміцнює імунітет, підтримує травлення" },
+  { name: "Капуста",   days: "7–14 днів",  benefit: "Зміцнює імунітет, підтримує травлення" },
   { name: "Салат",     days: "7–10 днів",  benefit: "Вітаміни та клітковина" },
   { name: "Горох",     days: "7–14 днів",  benefit: "Покращує стан шкіри і волосся" },
   { name: "Гірчиця",   days: "7–10 днів",  benefit: "Підтримує здоров'я травної системи" },
@@ -41,8 +41,9 @@ const varieties: Variety[] = [
 const steps: Step[] = [
   { num: "01", title: "Засипте насіння",   text: "Рівномірно розподіліть насіння по льняному килимку в контейнері." },
   { num: "02", title: "Зволожте",           text: "Легко полийте, щоб килимок був вологим. Не перезволожуйте." },
-  { num: "03", title: "Поставте на світло", text: "Розмістіть контейнер на підвіконні з гарним освітленням." },
-  { num: "04", title: "Збирайте урожай",    text: "Через 7–14 днів зріжте мікрозелень і насолоджуйтесь!" },
+  { num: "03", title: "Накрийте та пророщуйте", text: "Складіть всі контейнери один на одного, накрийте кришкою та залиште на 3–4 дні." },
+  { num: "04", title: "Поставте на світло", text: "Розмістіть контейнер на підвіконні з гарним освітленням." },
+  { num: "05", title: "Збирайте урожай",    text: "Через 7–14 днів зріжте мікрозелень і насолоджуйтесь!" },
 ];
 
 const foodItems: FoodItem[] = [
@@ -183,7 +184,7 @@ export default function Home() {
             <div>
               <p style={{ ...s.label, opacity: 0, animation: "fadeInUp 0.8s ease 0.1s forwards" }}>Мікрозелень / Набір мікрозелені 10 врожаїв</p>
               <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(40px,6vw,78px)", fontWeight: 400, lineHeight: 1.05, marginBottom: "28px", opacity: 0, animation: "fadeInUp 0.8s ease 0.2s forwards" }}>
-                вирости своє<br /><em style={{ fontStyle: "italic", color: "#3B5040" }}>зелене</em> диво
+                Вирости своє<br /><em style={{ fontStyle: "italic", color: "#3B5040" }}>зелене</em> диво
               </h1>
               <p style={{ fontSize: "clamp(15px,1.4vw,17px)", lineHeight: 1.7, color: "#4A4A3A", maxWidth: "420px", marginBottom: "40px", opacity: 0, animation: "fadeInUp 0.8s ease 0.35s forwards" }}>
                 Набір для вирощування мікрозелені з 10 видів насіння. Свіжа зелень прямо з підвіконня вже за 7–14 днів.
@@ -270,13 +271,9 @@ export default function Home() {
             <div style={{ opacity: productRef.inView ? 1 : 0, transform: productRef.inView ? "translateX(0)" : "translateX(40px)", transition: "all 0.8s ease 0.2s" }}>
               <p style={s.label}>Набір мікрозелені 10 врожаїв</p>
               <h2 style={s.sectionTitle}>Усе для вашого<br />першого врожаю</h2>
-              <p style={{ fontSize: "15px", color: "#4A4A3A", lineHeight: 1.7, marginBottom: "32px" }}>
-                Набір містить все необхідне: льняний килимок, лоток, насіння 10 видів по 10г та інструкцію.
-              </p>
-
               <div style={{ backgroundColor: "#E8F0E4", padding: "24px", marginBottom: "28px" }}>
                 <div style={{ fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "14px", color: "#3B5040", fontWeight: 600 }}>Комплектація</div>
-                {["Насіння 10 видів по 10г", "Льняний килимок для вирощування", "Лоток 183×128мм — 10 шт.", "Інструкція по вирощуванню"].map(item => (
+                {["Насіння 10 видів по 10г", "Льняний килимок для вирощування — 10 шт.", "Лоток 183×128мм — 10 шт.", "Інструкція по вирощуванню"].map(item => (
                   <div key={item} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px", fontSize: "14px" }}>
                     <div style={{ width: "5px", height: "5px", backgroundColor: "#3B5040", flexShrink: 0 }} />
                     {item}
@@ -529,6 +526,7 @@ export default function Home() {
       <footer style={{ backgroundColor: "#0E0E0A", padding: "32px clamp(20px,5vw,48px)" }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "17px", color: "#F5F2EB" }}>Грін гарден</div>
+          <a href="tel:+380675311952" style={{ fontSize: "14px", color: "#8AA68B", textDecoration: "none", letterSpacing: "0.05em" }}>+38 (067) 531-19-52</a>
           <div style={{ fontSize: "12px", color: "#6B6B5A" }}>© 2026 Грін гарден. Всі права захищені.</div>
           <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
             {["Доставка та оплата", "Повернення", "Конфіденційність"].map(l => (
