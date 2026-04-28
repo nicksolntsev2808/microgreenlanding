@@ -121,7 +121,7 @@ export default function Home() {
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
-  const price = variant === "gift" ? 20 : 10;
+  const price = variant === "gift" ? 549 : 499;
   const variantSectionRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -288,8 +288,8 @@ export default function Home() {
                 <div style={{ fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "12px", color: "#6B6B5A" }}>Фасування насіння</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                   {([
-                    { value: "simple", label: "Прозорий пакетик", sublabel: "для себе",     price: "10 грн" },
-                    { value: "gift",   label: "Крафт-пакетик",    sublabel: "на подарунок", price: "20 грн" },
+                    { value: "simple", label: "Прозорий пакетик", sublabel: "для себе",     price: "499 грн" },
+                    { value: "gift",   label: "Крафт-пакетик",    sublabel: "на подарунок", price: "549 грн" },
                   ] as const).map(opt => (
                     <button key={opt.value} onClick={() => setVariant(opt.value)}
                       style={{ padding: "14px", textAlign: "left", border: variant === opt.value ? "2px solid #3B5040" : "2px solid #C8C4BB", backgroundColor: variant === opt.value ? "#E8F0E4" : "transparent", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Jost', sans-serif" }}>
