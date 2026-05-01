@@ -79,11 +79,38 @@ export default function Home() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
 
+  // Meta Pixel — ViewContent при завантаженні
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).fbq) {
+      (window as any).fbq("track", "ViewContent", {
+        content_name: "Набір мікрозелені 10 врожаїв",
+        content_ids: ["microgreen-tiger"],
+        content_type: "product",
+        currency: "UAH",
+        value: 499,
+      });
+    }
+  }, []);
+
   // Перевірка редиректу після оплати Monobank
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("payment") === "success") {
       setPaymentSuccess(true);
+      const savedInvoice = sessionStorage.getItem("invoiceId");
+      const savedPrice = sessionStorage.getItem("orderPrice");
+      if (savedInvoice) { setInvoiceId(savedInvoice); sessionStorage.removeItem("invoiceId"); }
+      // Meta Pixel — Purchase
+      if (typeof window !== "undefined" && (window as any).fbq) {
+        (window as any).fbq("track", "Purchase", {
+          content_name: "Набір мікрозелені 10 врожаїв",
+          content_ids: ["microgreen-tiger"],
+          content_type: "product",
+          currency: "UAH",
+          value: savedPrice ? parseFloat(savedPrice) : 499,
+        });
+        if (savedPrice) sessionStorage.removeItem("orderPrice");
+      }
       window.history.replaceState({}, "", "/");
     }
   }, []);
@@ -307,7 +334,31 @@ export default function Home() {
                   <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "36px", fontWeight: 600 }}>{price} грн</div>
                 </div>
                 <button style={{ flex: 1, minWidth: "160px", backgroundColor: "#3B5040", color: "#F5F2EB", padding: "16px 24px", fontSize: "13px", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", transition: "background-color 0.3s ease" }}
-                  onClick={() => { variantSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => setCheckoutOpen(true), 600); }}
+                  onClick={() => {
+                  if (typeof window !== "undefined" && (window as any).fbq) {
+                    (window as any).fbq("track", "AddToCart", {
+                      content_name: "Набір мікрозелені 10 врожаїв",
+                      content_ids: ["microgreen-tiger"],
+                      content_type: "product",
+                      currency: "UAH",
+                      value: price,
+                    });
+                  }
+                  variantSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  setTimeout(() => {
+                    if (typeof window !== "undefined" && (window as any).fbq) {
+                      (window as any).fbq("track", "InitiateCheckout", {
+                        content_name: "Набір мікрозелені 10 врожаїв",
+                        content_ids: ["microgreen-tiger"],
+                        content_type: "product",
+                        currency: "UAH",
+                        value: price,
+                        num_items: 1,
+                      });
+                    }
+                    setCheckoutOpen(true);
+                  }, 600);
+                }}
                   onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#2A3B2F"; }}
                   onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#3B5040"; }}>
                   Купити зараз

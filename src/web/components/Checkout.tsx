@@ -200,6 +200,7 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
         console.log("Monobank response:", JSON.stringify(data));
         if (data.pageUrl) {
           if (data.invoiceId) sessionStorage.setItem('invoiceId', data.invoiceId);
+          sessionStorage.setItem('orderPrice', String(price));
           window.location.href = data.pageUrl;
         }
         else setError(`Помилка: ${data.errText || data.error || JSON.stringify(data)}`);
