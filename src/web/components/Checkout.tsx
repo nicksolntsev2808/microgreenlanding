@@ -173,6 +173,16 @@ export default function Checkout({ variant, price, onClose }: CheckoutProps) {
 
         if (res.ok) {
           setInvoiceId(orderRef);
+          // Meta Pixel — Purchase для накладеного платежу
+          if (typeof window !== "undefined" && (window as any).fbq) {
+            (window as any).fbq("track", "Purchase", {
+              content_name: "Набір мікрозелені 10 врожаїв",
+              content_ids: ["microgreen-tiger"],
+              content_type: "product",
+              currency: "UAH",
+              value: price,
+            });
+          }
           setStep("success");
         } else {
           setError("Помилка відправки. Спробуйте ще раз.");
